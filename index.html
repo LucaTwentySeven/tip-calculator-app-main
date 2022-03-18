@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- displays site properly based on user's device -->
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+  <link rel="stylesheet" href="./css/app.css">
+  <title>Frontend Mentor | Tip calculator app</title>
+
+</head>
+
+<body>
+  <h1>Spli<br>tter</h1>
+  <div class="component">
+    <div class="column">
+      <form action="" id="splitter" novalidate>
+        <p>Bill</p>
+        <input type="number" id="billValue" name="billValue" min="1" max="9999" placeholder="0">
+        <p>Select Tip %</p>
+        <div class="tip-percentage">
+
+          <input type="radio" id="5" value="5" name="tipValue" class="button"><label for="5">5%</label>
+          <input type="radio" id="10" value="10" name="tipValue" class="button"><label for="10">10%</label>
+          <input type="radio" id="15" value="15" name="tipValue" class="button"><label for="15">15%</label>
+          <input type="radio" id="25" value="25" name="tipValue" class="button"><label for="25">25%</label>
+          <input type="radio" id="50" value="50" name="tipValue" class="button"><label for="50">50%</label>
+          <div class="hidden-field">
+            <input type="button" id="customButton" class="hidden-field-button" value="Custom"
+              onclick="toggleCustomValue()">
+            <input type="number" id="customValue" value="" name="custom" class="custom-value button" min="1" max="99"
+              step="1">
+          </div>
+
+        </div>
+        <div class="number-of-persons">
+          <p>Number of People</p>
+          <p id="error"></p>
+          <input type="number" id="noOfPersons" min="1" max="99" step="1" placeholder="0">
+        </div>
+      </form>
+    </div>
+    <div class="column">
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <p>Tip Amount</p>
+              <p>/ person</p>
+            </td>
+            <td>
+              <h3 id="tipPerPerson">$0.00</h3>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p>Total</p>
+              <p>/ person</p>
+            </td>
+            <td>
+              <h3 id="total">$0.00</h3>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input type="button" id="reset" value="Reset" onclick="resetForm()" disabled>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+
+    </div>
+  </div>
+
+  <script>
+
+    // Set of variables
+    const form = document.getElementById("splitter");
+    const noOfPersons = document.querySelector('#noOfPersons');
+    const customValue = document.querySelector('#customValue');
+    const billValue = document.querySelector('#billValue');
+    const error = document.getElementById('error');
+    const tipPerPerson = document.getElementById('tipPerPerson');
+    const tipTotal = document.getElementById('total');
+    const customButton = document.getElementById("customButton");
+    let tipValue = "";
+    let billValueUpdated = "";
+    let noOfPersonsUpdated = "";
+
+    // Open hidden input
+    function toggleCustomValue() {
+      customButton.classList.add('disabled');
+      customValue.classList.add('active');
+    }
+
+    // Event listeners for Bill and Number of People
+    billValue.addEventListener('input', updateValue);
+    noOfPersons.addEventListener('input', updateValuePersons);
+
+    // Loop of Event Listeners for radio buttons and custom tip field
+    let pPa = document.getElementsByClassName('button');
+    for (let i = 0; i < pPa.length; i++) {
+      pPa[i].addEventListener("click", buttonClicked(pPa[i].value));
+    }
+
+    // Function to select tip value of selected radio
+    function buttonClicked(value) {
+      return function () {
+        if (value == 0) {
+          tipValue = customValue.value;
+          let radio = document.querySelector('input[type=radio][name=tipValue]:checked');
+          if (radio) {
+            radio.checked = false;
+          }
+        } else {
+          tipValue = value;
+        }
+      }
+    }
+    // Live update form inputs  
+    function updateValue(e) {
+      billValueUpdated = e.target.value;
+    }
+    function updateValuePersons(e) {
+      noOfPersonsUpdated = e.target.value;
+    }
+
+    // Event listener for a form to click somewhere
+    form.addEventListener('click', countedTip);
+    function countedTip() {
+      if (!billValueUpdated || !noOfPersonsUpdated) {
+        tipPerPerson.textContent = '$' + '0.00';
+        error.textContent = 'Cannot be zero!';
+      } else if (!tipValue) {
+        error.textContent = 'Select tip!';
+      } else {
+        const resetButton = document.getElementById('reset');
+        resetButton.disabled = false;
+        let countedTipFull = ((billValueUpdated * tipValue) / 100).toFixed(2);
+        let countedTipValue = (((billValueUpdated * tipValue) / 100) / noOfPersonsUpdated).toFixed(2);
+        tipPerPerson.textContent = '$' + countedTipValue;
+        tipTotal.textContent = '$' + countedTipFull;
+        error.textContent = '';
+      }
+    }
+
+    // Reset Custom tip value function
+    function resetCustomButton() {
+      if (customButton.classList.contains('disabled')) {
+        customButton.classList.remove('disabled');
+        customValue.classList.remove('active');
+      }
+    }
+
+    // Form reset. Clearing all variables.
+    function resetForm() {
+      document.getElementById("splitter").reset();
+      tipValue = "";
+      billValueUpdated = "";
+      noOfPersonsUpdated = "";
+      tipPerPerson.textContent = '$' + '0.00';
+      tipTotal.textContent = '$' + '0.00';
+      resetCustomButton()
+      document.getElementById('reset').disabled = true;
+    }
+
+  </script>
+
+
+
+  <div class="attribution">
+    <p>Challenge by&nbsp;<a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>.
+    </p>
+    <p>Coded by&nbsp;<a href="https://supraweb.dev/" target="_blank">Łukasz Gąsiecki</a>.</p>
+  </div>
+</body>
+
+</html>
